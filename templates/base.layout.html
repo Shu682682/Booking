@@ -5,16 +5,91 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    {{block "css" .}}
-    {{end}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1080; 
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+        .nav-link {
+            color: white;
+            font-size: 1.1rem;
+        }
+        .nav-link:hover {
+            color:rgba(108, 47, 188, 0.34);
+        }
+        .nav-link.btn-warning {
+            color: white !important;
+        }
+    </style>
+
+    {{block "css" .}} {{end}}
 </head>
 <body>
-    {{block "content".}}
-    {{end}}
-    {{block "js" .}}
-    {{end}}
+     <!-- Navigation Bar -->
+     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/index">Booking Website</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/index">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
     
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="roomsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Rooms
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="roomsDropdown">
+                    <li><a class="dropdown-item" href="/rooms/generals-quarter">General's Quarter</a></li>
+                    <li><a class="dropdown-item" href="/rooms/majors-suite">Majors' Suite</a></li>
+                </ul>
+            </li>               
+                    
+                    <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-warning text-white px-3" href="/book">Book Now</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container mt-5 pt-5">
+        {{block "content" .}} {{end}}
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light text-center py-3 mt-5">
+        <p>© 2025 BookingWebsite. All rights reserved.</p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    {{block "js" .}} {{end}}
+
 </body>
 </html>
 {{end}}
