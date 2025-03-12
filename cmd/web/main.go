@@ -13,7 +13,8 @@ import (
 	"github.com/alexedwards/scs/v2"
 )
 
-const portNumber = ":8080" // cannot change use const
+
+const portNumber = ":8080" 
 var app config.AppConfig
 var session *scs.SessionManager
 

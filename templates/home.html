@@ -1,11 +1,80 @@
+{{template "base" .}}
 {{define "content"}}
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <h1>This is the Home page</h1>
-                <p>Test</p>
-            </div>
+<div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="2000">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="/static/images/swimmingpool2.jpg" class="carousel-img" alt="Hotel Main">
+        </div>
+        <div class="carousel-item">
+            <img src="/static/images/hotelmain.jpg" class="carousel-img" alt="Relax Spot">
+        </div>
+        <div class="carousel-item">
+            <img src="/static/images/bathroom2.jpg" class="carousel-img" alt="Luxury Bathroom">
         </div>
     </div>
-    {{end}}
-    {{template "base" .}}
+</div>
+
+<div class="content-overlay">
+    <h1 class="display-4">Experience the Best Stay</h1>
+    <p class="lead">Indulge in luxury, explore breathtaking views, and relax like never before.</p>
+    <a href="/index" class="btn btn-primary btn-lg">Start Your Journey</a>
+</div>
+
+<style>
+    #heroCarousel {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: -1;
+    }
+
+    .carousel-img {
+        width: 100%;
+        height: 100vh;
+        object-fit: cover; 
+    }
+
+    .content-overlay {
+        border-radius: 50px; 
+        position: relative;
+        height: 80vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        color: white;
+        background: rgba(0, 0, 0, 0.15);
+        backdrop-filter: blur(3px); 
+        padding: 10px;
+    }
+    .content-overlay a.btn {
+        background-color:rgb(136, 111, 176); 
+        border: none;
+        color: white;
+        padding: 12px 30px;
+        font-size: 1.2rem;
+        border-radius: 25px; 
+        transition: background 0.3s ease-in-out;
+    }
+
+    .content-overlay a.btn:hover {
+        background-color:rgb(127, 114, 169);
+    }
+
+    @media (max-width: 768px) {
+        .display-4 {
+            font-size: 2rem;
+        }
+        .lead {
+            font-size: 1rem;
+        }
+        .btn-lg {
+            padding: 10px 20px;
+            font-size: 1rem;
+        }
+    }
+</style>
+{{end}}
