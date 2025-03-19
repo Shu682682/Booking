@@ -23,7 +23,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 30px 50px 50px; /* 上移表單 */
+            padding: 30px 50px 50px;
         }
 
         .booking-form {
@@ -40,12 +40,12 @@
         }
 
         .btn-primary {
-            background-color: #ff9800;
+            background-color:rgb(167, 119, 212);
             border: none;
         }
 
         .btn-primary:hover {
-            background-color: #e68900;
+            background-color:rgb(215, 239, 246);
         }
 
         /* Sliding Photo */
@@ -59,7 +59,6 @@
             object-fit: cover;
         }
 
-        /* 讓 footer 延伸滿版 */
         footer {
             width: 100%;
             background-color: #343a40;
@@ -74,37 +73,40 @@
 
     <div class="content-wrapper">
         <div class="container booking-container">
+            <!-- Booking Form -->
             <div class="booking-form">
                 <h2 class="text-center mb-4">Room Booking Reservation</h2>
-                <form method="POST" action="/reservation">
+                <form id="booking-form">
+                    <input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
                     <label for="start-date" class="form-label">Starting Date</label>
                     <input type="date" id="start-date" name="start_date" class="form-control" required>
-
+                
                     <label for="end-date" class="form-label">End Date</label>
                     <input type="date" id="end-date" name="end_date" class="form-control" required>
-
+                
                     <label for="people" class="form-label">People Amount</label>
                     <input type="number" id="people" name="people_amount" class="form-control" min="1" required>
-
+                
                     <label for="full-name" class="form-label">Full Name</label>
                     <input type="text" id="full-name" name="full_name" class="form-control" required>
-
+                
                     <label for="email" class="form-label">Email Address</label>
                     <input type="email" id="email" name="email" class="form-control" required>
-
+                
                     <label for="phone" class="form-label">Phone Number</label>
                     <input type="tel" id="phone" name="phone" class="form-control" required>
-
+                
                     <label for="room-choice" class="form-label">Room Choice</label>
                     <select id="room-choice" name="room_choice" class="form-control" required>
                         <option value="General's Quarter">General's Quarter</option>
                         <option value="Majors' Suite">Majors' Suite</option>
                     </select>
-
+                
                     <button type="submit" class="btn btn-primary w-100 mt-3">Reserve Now</button>
                 </form>
             </div>
 
+            <!-- Sliding Photo -->
             <div class="sliding-photo">
                 <div id="roomCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
                     <div class="carousel-inner">
@@ -130,12 +132,70 @@
                 </div>
             </div>
         </div>
-
-        
     </div>
 
+    <!-- Booking Modal -->
+    <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="bookingModalLabel">Booking Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="bookingModalBody">
+                    <!-- Booking details will be displayed here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Fetch API -->
+     <script>
+        document.getElementById("booking-form").addEventListener("submit", function (event) {
+            event.preventDefault();
+            
+            let formData = new FormData(this);
+            
+            fetch("/book", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(errorText => { throw new Error(errorText); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                let modalBody = document.getElementById("bookingModalBody");
+                modalBody.innerHTML = `
+                    <p><strong>Start Date:</strong> ${data.start_date}</p>
+                    <p><strong>End Date:</strong> ${data.end_date}</p>
+                    <p><strong>People:</strong> ${data.people_amount}</p>
+                    <p><strong>Name:</strong> ${data.full_name}</p>
+                    <p><strong>Email:</strong> ${data.email}</p>
+                    <p><strong>Phone:</strong> ${data.phone}</p>
+                    <p><strong>Room:</strong> ${data.room_choice}</p>
+                    <h5 class="text-success">✔ Booked Successfully!</h5>
+                `;
+        
+                let bookingModal = new bootstrap.Modal(document.getElementById("bookingModal"));
+                bookingModal.show();
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                let modalBody = document.getElementById("bookingModalBody");
+                modalBody.innerHTML = `<h5 class="text-danger">❌ Booking failed: ${error.message}</h5>`;
+                let bookingModal = new bootstrap.Modal(document.getElementById("bookingModal"));
+                bookingModal.show();
+            });
+        });
+     </script>
 </body>
 </html>
-
 {{end}}
