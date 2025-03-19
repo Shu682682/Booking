@@ -65,11 +65,7 @@ func(m*Repository)Book(w http.ResponseWriter, r *http.Request){
 }
 func(m*Repository)PostBook(w http.ResponseWriter, r *http.Request){
 
-
-	// 確保 Content-Type 為 JSON
 	w.Header().Set("Content-Type", "application/json")
-
-	// 確保請求是 POST
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		json.NewEncoder(w).Encode(map[string]interface{}{
@@ -79,7 +75,6 @@ func(m*Repository)PostBook(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	// 解析表單資料
 	err := r.ParseForm()
 	if err != nil {
 		log.Println("Error parsing form:", err)
@@ -91,7 +86,7 @@ func(m*Repository)PostBook(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	// 取得使用者輸入的資料
+	//gain users' data
 	start := r.FormValue("start_date")
 	end := r.FormValue("end_date")
 	people := r.FormValue("people_amount")
@@ -100,7 +95,7 @@ func(m*Repository)PostBook(w http.ResponseWriter, r *http.Request){
 	phone := r.FormValue("phone")
 	room := r.FormValue("room_choice")
 
-	// 確保所有欄位都填寫
+	
 	if start == "" || end == "" || people == "" || name == "" || email == "" || phone == "" || room == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(map[string]interface{}{
@@ -110,7 +105,7 @@ func(m*Repository)PostBook(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	// ✅ 成功回應 JSON
+	// response json
 	response := map[string]interface{}{
 		"success":       true,
 		"message":       "Booking confirmed!",
@@ -134,7 +129,7 @@ type jsonResponse struct {
 }
 
 func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "application/json") // 確保所有回應為 JSON
+    w.Header().Set("Content-Type", "application/json") 
 
     err := r.ParseForm()
     if err != nil {
@@ -160,7 +155,7 @@ func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 
     log.Printf("Checking availability from %s to %s", start, end)
 
-    w.WriteHeader(http.StatusOK) // 設定 200 OK
+    w.WriteHeader(http.StatusOK) 
     json.NewEncoder(w).Encode(jsonResponse{
         OK:      true,
         Message: "Available!",
@@ -205,7 +200,6 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 確保所有欄位都有填寫
 	reservation := models.Reservation{
 		StartDate:  r.Form.Get("start_date"),
 		EndDate:    r.Form.Get("end_date"),
@@ -236,7 +230,6 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 預約成功
 	log.Println("Reservation received:", reservation)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]interface{}{
