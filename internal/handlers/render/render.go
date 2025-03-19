@@ -7,8 +7,9 @@ import (
 	"path/filepath"
 	"text/template"
 
-	"github.com/Shu682682/Booking.git/pkg/handlers/config"
-	"github.com/Shu682682/Booking.git/pkg/models"
+	"github.com/Shu682682/Booking.git/internal/config"
+	"github.com/Shu682682/Booking.git/internal/models"
+	"github.com/justinas/nosurf"
 )
 
 var functions = template.FuncMap{}
@@ -25,7 +26,8 @@ func NewTemplates(a *config.AppConfig) {
 	}
 }
 
-func AddDefaultData(td *models.TemplateData) *models.TemplateData{
+func AddDefaultData(td *models.TemplateData,r *http.Request) *models.TemplateData{
+	td.CSRFToken=nosurf.Token(r)
 	if td == nil {
 		td = &models.TemplateData{}
 	}
@@ -36,7 +38,7 @@ func AddDefaultData(td *models.TemplateData) *models.TemplateData{
 }
 
 // RenderTemplate renders an HTML template with a base template
-func RenderTemplate(w http.ResponseWriter, html string, td *models.TemplateData) {
+func RenderTemplate(w http.ResponseWriter, r *http.Request, html string, td *models.TemplateData) {
 	var tc map[string]*template.Template
 	var err error
 
@@ -60,7 +62,7 @@ func RenderTemplate(w http.ResponseWriter, html string, td *models.TemplateData)
 	}
 
 	buf := new(bytes.Buffer)
-	td =AddDefaultData(td)
+	td =AddDefaultData(td,r)
 
 	err = t.Execute(buf,td)
 
@@ -117,7 +119,6 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 
 		if ts != nil { 
 			myCache[name] = ts
-			log.Println("Cached template:", name)
 		}
 	}
 	return myCache, nil
