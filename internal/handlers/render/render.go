@@ -2,6 +2,7 @@ package render
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"net/http"
 	"path/filepath"
@@ -14,6 +15,7 @@ import (
 
 var functions = template.FuncMap{}
 var app *config.AppConfig
+var pathToTemplates="./templates"
 
 // NewTemplates initializes app configuration
 func NewTemplates(a *config.AppConfig) {
@@ -84,7 +86,7 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, html string, td *mod
 func CreateTemplateCache() (map[string]*template.Template, error) {
 	myCache := map[string]*template.Template{}
 	
-	pages, err := filepath.Glob("./templates/*.html") 
+	pages, err := filepath.Glob(fmt.Sprintf("%s/*.html", pathToTemplates)) 
 	if err != nil {
 		log.Println("Error finding page templates:", err)
 		return myCache, err
@@ -102,7 +104,7 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 		}
 
 		// 找 base layout (base.layout.html)
-		matches, err := filepath.Glob("./templates/*.layout.html")
+		matches, err := filepath.Glob(fmt.Sprintf("%s/*.layout.html",pathToTemplates))
 		if err != nil {
 			log.Println("Error finding layout templates:", err)
 			continue
@@ -110,7 +112,7 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 
 		if len(matches) > 0 {
 			// log.Println("Parsing layout templates:", matches)
-			ts, err = ts.ParseGlob("./templates/*.layout.html")
+			ts, err = ts.ParseGlob(fmt.Sprintf("%s*.layout.html", pathToTemplates))
 			if err != nil {
 				log.Println("Error parsing layout templates:", err)
 				continue

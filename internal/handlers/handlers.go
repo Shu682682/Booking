@@ -127,12 +127,12 @@ type jsonResponse struct {
 	OK      bool   `json:"ok"`
 	Message string `json:"message"`
 }
-
 func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json") 
 
     err := r.ParseForm()
     if err != nil {
+        log.Println("Error parsing form:", err)
         w.WriteHeader(http.StatusBadRequest)
         json.NewEncoder(w).Encode(jsonResponse{
             OK:      false,
@@ -141,10 +141,11 @@ func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    start := r.Form.Get("start_date")
-    end := r.Form.Get("end_date")
+    start := r.Form.Get("start")  // 👈 改成 "start"
+    end := r.Form.Get("end")      // 👈 改成 "end"
 
     if start == "" || end == "" {
+        log.Println("Missing required fields")
         w.WriteHeader(http.StatusBadRequest)
         json.NewEncoder(w).Encode(jsonResponse{
             OK:      false,
@@ -161,6 +162,40 @@ func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
         Message: "Available!",
     })
 }
+
+// func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
+//     w.Header().Set("Content-Type", "application/json") 
+
+//     err := r.ParseForm()
+//     if err != nil {
+//         w.WriteHeader(http.StatusBadRequest)
+//         json.NewEncoder(w).Encode(jsonResponse{
+//             OK:      false,
+//             Message: "Unable to parse form data",
+//         })
+//         return
+//     }
+
+//     start := r.Form.Get("start_date")
+//     end := r.Form.Get("end_date")
+
+//     if start == "" || end == "" {
+//         w.WriteHeader(http.StatusBadRequest)
+//         json.NewEncoder(w).Encode(jsonResponse{
+//             OK:      false,
+//             Message: "Missing required fields",
+//         })
+//         return
+//     }
+
+//     log.Printf("Checking availability from %s to %s", start, end)
+
+//     w.WriteHeader(http.StatusOK) 
+//     json.NewEncoder(w).Encode(jsonResponse{
+//         OK:      true,
+//         Message: "Available!",
+//     })
+// }
 
 //Reservation renders the make a reservation page and displays form
 func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
