@@ -20,8 +20,26 @@ var session *scs.SessionManager
 
 // main is the main Application function
 func main() {
+	err:=run()
+	if err!=nil{
+		log.Fatal(err)
+	}
 	
 	//change this to true when in production
+	
+	// initial server
+	fmt.Println(fmt.Sprintf("Starting application on port %s", portNumber)) 
+
+	srv :=&http.Server{
+		Addr: portNumber,
+		Handler: routes(&app),
+		
+	}
+	err =srv.ListenAndServe()
+	log.Fatal(err)
+
+}
+func run()error{
 	app.InProduction=false
 
 	session=scs.New()
@@ -34,7 +52,8 @@ func main() {
 	// 建立 template cache
 	tc, err := render.CreateTemplateCache() 
 	if err != nil {
-		log.Fatal("Cannot create template cache:", err) //
+		log.Fatal("Cannot create template cache:", err) 
+		return err
 	}
 	app.TemplateCache = tc
 	app.UseCache=false
@@ -43,18 +62,8 @@ func main() {
 	handlers.NewHandlers(repo)
 
 	//initial template
-	render.NewTemplates(&app) //
+	render.NewTemplates(&app) 
 
 
-	// initial server
-	fmt.Println(fmt.Sprintf("Starting application on port %s", portNumber)) 
-
-	srv :=&http.Server{
-		Addr: portNumber,
-		Handler: routes(&app),
-		
-	}
-	err =srv.ListenAndServe()
-	log.Fatal(err)
-
+	return nil
 }
