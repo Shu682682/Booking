@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/Shu682682/Booking.git/internal/config"
-	"github.com/Shu682682/Booking.git/internal/handlers/render"
 	"github.com/Shu682682/Booking.git/internal/models"
+	"github.com/Shu682682/Booking.git/internal/render"
 	"github.com/alexedwards/scs/v2"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
