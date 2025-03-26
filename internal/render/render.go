@@ -2,6 +2,7 @@ package render
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -50,7 +51,7 @@ func AddDefaultData(td *models.TemplateData,r *http.Request) *models.TemplateDat
 }
 
 // RenderTemplate renders an HTML template with a base template
-func RenderTemplate(w http.ResponseWriter, r *http.Request, html string, td *models.TemplateData) {
+func RenderTemplate(w http.ResponseWriter, r *http.Request, html string, td *models.TemplateData) error{
 	var tc map[string]*template.Template
 	var err error
 
@@ -61,7 +62,7 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, html string, td *mod
 		if err != nil {
 			log.Println("Error creating new template cache:", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			return
+			
 		}
 	}
 
@@ -70,7 +71,7 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, html string, td *mod
 	if !ok {
 		log.Println("Could not get template from template cache:", html)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
+		return errors.New("Cant get template from cache")
 	}
 
 	buf := new(bytes.Buffer)
@@ -82,7 +83,7 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, html string, td *mod
 	if err != nil {
 		log.Println("Error executing template:", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
+		log.Fatal(err)
 	}
 
 	// Render the template
@@ -90,6 +91,7 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, html string, td *mod
 	if err != nil {
 		log.Println("Error writing template to response:", err)
 	}
+	return nil
 }
 
 // CreateTemplateCache generates a map of templates for caching
@@ -122,7 +124,7 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 
 		if len(matches) > 0 {
 			// log.Println("Parsing layout templates:", matches)
-			ts, err = ts.ParseGlob(fmt.Sprintf("%s*.layout.html", pathToTemplates))
+			ts, err = ts.ParseGlob(fmt.Sprintf("%s/*.layout.html", pathToTemplates))
 			if err != nil {
 				log.Println("Error parsing layout templates:", err)
 				continue

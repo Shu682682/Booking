@@ -12,7 +12,6 @@ import (
 
 
 func TestAddDefaultData(t *testing.T) {
-	// ✅ 確保 `session` 已經初始化
 	if session == nil {
 		session = scs.New()
 		testApp.Session = session
@@ -24,23 +23,43 @@ func TestAddDefaultData(t *testing.T) {
 		t.Fatal("Failed to create session request:", err)
 	}
 
-	// ✅ 放入 session
 	session.Put(r.Context(), "flash", "123")
 
-	// ✅ 立即讀取確認數據是否存入
 	flash := session.GetString(r.Context(), "flash")
 	if flash != "123" {
 		t.Fatalf("Session value not stored properly, expected '123' but got: '%s'", flash)
 	}
 
-	// ✅ 測試 `AddDefaultData()`
 	result := AddDefaultData(&td, r)
 
-	// ✅ 確保 `AddDefaultData()` 能夠讀取 session
 	if result.Flash != "123" {
 		t.Errorf("flash not found in session, expected '123' but got: '%s'", result.Flash)
 	}
 }
+
+func TestRenderTemplate(t *testing.T){
+	pathToTemplates="./../templates"
+	tc, err:=CreateTemplateCache()
+	if err!=nil{
+		t.Error(err)
+	}
+	app.TemplateCache=tc
+	r,err:=getSession()
+	if err!=nil{
+		t.Error(err)
+	}
+
+	var ww myWriter
+	err=RenderTemplate(&ww,r,"index.html",&models.TemplateData{})
+	if err!=nil{
+		t.Error("error writing template to browser")
+	}
+	err=RenderTemplate(&ww,r,"non-existent.html",&models.TemplateData{})
+	if err!=nil{
+		t.Error("rendered template that does not exist")
+	}
+}
+
 
 func getSession() (*http.Request, error) {
 	r, err := http.NewRequest("GET", "/some-url", nil)
@@ -48,12 +67,25 @@ func getSession() (*http.Request, error) {
 		return nil, err
 	}
 
-	// ✅ 確保 session 存在
 	ctx, err := session.Load(r.Context(), "")
 	if err != nil {
 		return nil, err
 	}
 
-	r = r.WithContext(ctx) // ✅ 重新加載帶有 session 的 context
+	r = r.WithContext(ctx) 
 	return r, nil
+}
+
+
+
+func TestNewTemplates(t *testing.T){
+	NewTemplates(app)
+}
+
+func TestCreateTemplateCache(t *testing.T){
+	pathToTemplates="./../../templates"
+	_,err:=CreateTemplateCache()
+	if err!=nil{
+		t.Error(err)
+	}
 }

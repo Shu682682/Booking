@@ -8,8 +8,8 @@ import (
 
 	"github.com/Shu682682/Booking.git/internal/config"
 	"github.com/Shu682682/Booking.git/internal/forms"
-	"github.com/Shu682682/Booking.git/internal/handlers/render"
 	"github.com/Shu682682/Booking.git/internal/models"
+	"github.com/Shu682682/Booking.git/internal/render"
 )
 
 //Repo the repository used by the handlers

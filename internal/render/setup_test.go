@@ -16,23 +16,19 @@ import (
 var testApp config.AppConfig
 
 func TestMain(m *testing.M) {
-	// 註冊 `gob` 以防止 session 無法序列化
 	gob.Register(models.Reservation{})
 	testApp.Session = session
 
 
-	// 初始化 session
-	session = scs.New()
+	session = scs.New()//initial session
 	session.Lifetime = 24 * time.Hour
 	session.Cookie.Persist = true
 	session.Cookie.SameSite = http.SameSiteLaxMode
 	session.Cookie.Secure = false
 
-	// 設定 `testApp`
 	testApp.InProduction = false
 	testApp.Session = session
 
-	// 建立 template cache
 	tc, err := CreateTemplateCache() 
 	if err != nil {
 		log.Fatal("Cannot create template cache:", err)
@@ -41,12 +37,27 @@ func TestMain(m *testing.M) {
 	testApp.TemplateCache = tc
 	testApp.UseCache = false
 
-	// 初始化 `render`
 	NewTemplates(&testApp)
 
-	// 運行測試
 	exitCode := m.Run()
 
-	// 退出
 	os.Exit(exitCode)
+}
+
+type myWriter struct{
+
+}
+
+func(tw *myWriter) Header() http.Header{
+	var h http.Header
+	 return h
+}
+
+func (tw *myWriter) WriteHeader(i int ){
+
+}
+
+func (tw *myWriter) Write(b []byte)(int,error){
+	length:=len(b)
+	return length,nil
 }
