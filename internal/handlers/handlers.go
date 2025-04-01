@@ -8,6 +8,7 @@ import (
 
 	"github.com/Shu682682/Booking.git/internal/config"
 	"github.com/Shu682682/Booking.git/internal/forms"
+	"github.com/Shu682682/Booking.git/internal/helpers"
 	"github.com/Shu682682/Booking.git/internal/models"
 	"github.com/Shu682682/Booking.git/internal/render"
 )
@@ -77,12 +78,7 @@ func(m*Repository)PostBook(w http.ResponseWriter, r *http.Request){
 
 	err := r.ParseForm()
 	if err != nil {
-		log.Println("Error parsing form:", err)
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]interface{}{
-			"success": false,
-			"message": "Unable to parse form",
-		})
+		helpers.ServerError(w,err)
 		return
 	}
 
@@ -132,7 +128,7 @@ func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 
     err := r.ParseForm()
     if err != nil {
-        log.Println("Error parsing form:", err)
+        helpers.ServerError(w,err)
         w.WriteHeader(http.StatusBadRequest)
         json.NewEncoder(w).Encode(jsonResponse{
             OK:      false,
@@ -225,7 +221,7 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	peopleStr := r.Form.Get("people_amount")
 	people, err := strconv.Atoi(peopleStr)
 	if err != nil {
-		log.Println("Invalid people amount:", peopleStr, err)
+		helpers.ServerError(w,err)
 		w.WriteHeader(http.StatusBadRequest)
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{

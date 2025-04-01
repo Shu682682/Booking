@@ -2,6 +2,7 @@ package render
 
 import (
 	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/Shu682682/Booking.git/internal/models"
@@ -38,7 +39,8 @@ func TestAddDefaultData(t *testing.T) {
 }
 
 func TestRenderTemplate(t *testing.T){
-	pathToTemplates="./../templates"
+	pathToTemplates = "./../../templates"
+	// pathToTemplates="./../templates"
 	tc, err:=CreateTemplateCache()
 	if err!=nil{
 		t.Error(err)
@@ -48,16 +50,29 @@ func TestRenderTemplate(t *testing.T){
 	if err!=nil{
 		t.Error(err)
 	}
+	rr:=httptest.NewRecorder()
 
-	var ww myWriter
-	err=RenderTemplate(&ww,r,"index.html",&models.TemplateData{})
+	err=RenderTemplate(rr,r, "index.html",&models.TemplateData{})
 	if err!=nil{
-		t.Error("error writing template to browser")
+		t.Errorf("error writing template to browser: %v", err)
 	}
-	err=RenderTemplate(&ww,r,"non-existent.html",&models.TemplateData{})
-	if err!=nil{
-		t.Error("rendered template that does not exist")
+	err = RenderTemplate(rr, r, "non-existent.html", &models.TemplateData{})
+	if err == nil {
+		t.Error("expected error for non-existent template, but got none")
 	}
+	for k := range tc {
+		t.Log("Template loaded:", k)
+	}
+
+	// var ww myWriter
+	// err=RenderTemplate(&ww,r,"index.html",&models.TemplateData{})
+	// if err!=nil{
+	// 	t.Error("error writing template to browser")
+	// }
+	// err=RenderTemplate(&ww,r,"non-existent.html",&models.TemplateData{})
+	// if err!=nil{
+	// 	t.Error("rendered template that does not exist")
+	// }
 }
 
 
